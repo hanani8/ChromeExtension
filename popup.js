@@ -4,33 +4,25 @@
 
 'use strict';
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("cc").addEventListener("click", save);
+  document.addEventListener("keydown", function(e){
+    if(e.key == 'Enter'){
+      save();
+    }
+  });
 });
 
  function save(){
+   
   var travel = document.getElementById("tex").value;
-  var x = document.createElement("INPUT");
-  x.setAttribute("type", "text");
-  x.setAttribute("value", travel);
+  var x = document.createTextNode(travel);
+  
+
   document.body.appendChild(x);
-
-  var div = document.getElementById('divID');
-  div.innerHTML = div.innerHTML + travel;
+  document.getElementById("tex").value = ""
+  
 } 
-// The handler also must go in a .js file
-
-let changeColor = document.getElementById('changeColor');
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
-});
 
 
-changeColor.onclick = function(element) {
-  let color = element.target.value;
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {code: 'document.body.style.backgroundColor = "' + color + '";'});
-  });
-};
+
+
+
