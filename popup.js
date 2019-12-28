@@ -4,48 +4,66 @@
 
 'use strict';
 document.addEventListener('DOMContentLoaded', function() {
+  
   document.getElementById("showfiles").addEventListener("click", show);
   document.addEventListener("keydown", function(e){
     if(e.key == 'Enter'){
-      save();
+      var Itext = document.getElementById("tex").value;
+      save(Itext);
         }
    
   });
   
 });
-
- function save(){
+  
+var items=[];
+const obj={'Note':items};
+ function save(input){
    
-  var travel = document.getElementById("tex").value;
-  chrome.storage.sync.set({'Note1':travel},function(){
+   items.push(input);
+   
 
-    alert('your note has been saved');
-    var x = document.createTextNode(travel);
-  document.body.appendChild(x);
-  document.getElementById("tex").value = ""
+  chrome.storage.sync.set(obj,function(){
+
+  alert('your note has been saved');
+  var x = document.createTextNode(Itext);
+      document.body.appendChild(x);
+      document.getElementById("tex").value = ""
+
+  console.log(obj.Note)
   });
   
    //   saveTextasFile(travel);
   
 } 
 function show(){
-
-  chrome.storage.sync.get('Note1',function(data){
-    alert(data.Note1);
-    //need to replace alert with fuctionality
-    // need to use this get and set function in generators or loops
-  })
+  //displaying notes
+  chrome.storage.sync.get('Note',function(data){
+    alert(data.Note);
+    console.log(data);            
+    var myParent = document.body;                            //generating drop down
+    var array = data.Note;
+    var selectList = document.createElement("select");
+    selectList.id = "mySelect";
+    myParent.appendChild(selectList);
+       for (var i = 0; i < array.length; i++) {
+        var option = document.createElement("option");
+        option.value = array[i];
+        option.text = array[i];
+        selectList.appendChild(option);
+    }
+    document.getElementById("mySelect").addEventListener("change", function(){
+      alert('works');
+      var Itext = document.getElementById("tex");             //replaces textarea content with selected note
+      var selectBox = document.getElementById("mySelect");
+      Itext.value = selectBox.options[selectBox.selectedIndex].value;
+    
+      
+     
+    
+    });
+  });
 }
-// function saveTextasFile(travel){
-//   var a = document.createElement('a');
-//   var blob = new Blob([ travel ], {type : "text/plain;charset=UTF-8"});
-//   a.href = window.URL.createObjectURL(blob);
-//   a.download = 'note1.txt';
-//   a.style.display = 'none';
-//   document.body.appendChild(a);
-//   a.click();
-  
-// }
 
 
 
